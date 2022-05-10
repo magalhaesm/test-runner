@@ -1,49 +1,47 @@
 #include "test_runner.h"
 #include <stdio.h>
 
-int         g_test_failed;
-int         g_test_assert;
-int         g_assert_twice;
+t_test *g_curr_test;
 
-void setup(void)
+void test_assert(int condition, int line)
 {
-	g_test_failed = 0;
-	g_test_assert = 0;
-	g_assert_twice = 0;
+	g_curr_test->line = line;
+	if (!condition)
+		g_curr_test->state.failed = 1;
 }
 
-void test_assert(int condition)
+void test_runner(void (*func)(void), const char *funcname, const char *filename)
 {
-	g_test_assert += 1;
-	if (g_test_assert != 1)
-		g_assert_twice = 1;
-	else if (!condition)
-		g_test_failed = 1;
-}
+	t_test new_test;
 
-void test_runner(void (*func)(void), const char *funcname, const char *filename, int line)
-{
-	setup();
+	new_test.funcname = funcname;
+	new_test.filename = filename;
+	new_test.state.failed = 0;
+	g_curr_test = &new_test;
+
 	func();
-	display_result(funcname, filename, line);
+	display_result();
 }
 
-void display_pass(const char *funcname)
+void display_pass(void)
 {
-	printf("[ %s ] %s", GREEN("PASSED"), funcname);
+	printf("[ %s ] %s", GREEN("PASSED"), g_curr_test->funcname);
 }
 
-void display_fail(const char *funcname, const char *filename, int line)
+// Expression Evaluated To FALSE
+// No ASSERTION Found
+void display_fail(void)
 {
-	printf("[ %s ] %s", RED("FAILED"), funcname);
-	printf("\n[  %s  ] --- %s:%d", YELLOW("LINE"), filename, line);
+	printf("[ %s ] %s", RED("FAILED"), g_curr_test->funcname);
+	printf(" in %s:%d", g_curr_test->filename, g_curr_test->line);
+	printf("%s", RED(" Expression Evaluated To FALSE"));
 }
 
-void display_result(const char *funcname, const char *filename, int line)
+void display_result(void)
 {
-	if (!g_test_assert || g_assert_twice || g_test_failed)
-		display_fail(funcname, filename, line);
+	if (g_curr_test->state.failed)
+		display_fail();
 	else
-		display_pass(funcname);
+		display_pass();
 	printf("\n");
 }

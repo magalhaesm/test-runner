@@ -6,15 +6,26 @@
 # define YELLOW(string) "\033[1;33m" string "\033[0m"
 # define BOLD(string) "\033[1m" string "\033[0m"
 
-# define RUN(func) test_runner(func, #func, __FILE__, __LINE__)
-# define ASSERT(condition) test_assert(condition)
+# define RUN(func) test_runner(func, #func, __FILE__)
+# define ASSERT(condition) test_assert(condition, __LINE__)
 
-void setup(void);
-void test_assert(int condition);
-void test_runner(void (*func)(void), const char *funcname, const char *filename, int line);
-void display_result(const char *funcname, const char *filename, int line);
-void display_pass(const char *funcname);
-void display_fail(const char *funcname, const char *filename, int line);
-void assertion_error(void);
+typedef struct	s_test_state
+{
+	int failed;
+}				t_test_state;
+
+typedef struct	s_test
+{
+	const char *funcname;
+	const char *filename;
+	int	line;
+	t_test_state state;
+}				t_test;
+
+void test_assert(int condition, int line);
+void test_runner(void (*func)(void), const char *funcname, const char *filename);
+void display_result(void);
+void display_fail(void);
+void display_pass(void);
 
 #endif
