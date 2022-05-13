@@ -3,63 +3,54 @@
 
 t_test	g_test;
 
-void test_assert(int condition, int line)
+void	test_assert(int condition, int line)
 {
+	if (g_test.curr->line)
+		return;
 	if (!condition)
 	{
-		g_test.line = line;
-		g_test.failed = 1;
+		g_test.curr->failed = 1;
+		g_test.curr->line = line;
 		g_test.failures += 1;
 	}
 }
 
-void test_begin(const char *filename)
+void	test_runner(t_unit_test test)
 {
-	g_test.filename = filename;
-	g_test.failures = 0;
-	g_test.total = 0;
-	printf("[==========] Running tests for %s\n", filename);
-}
-
-int test_end(void)
-{
-	printf("[==========]\n");
-	printf("Tests: %d", g_test.total - g_test.failures);
-	printf("\tFailures: %d\n", g_test.failures);
-	if (g_test.failures)
-		return (1);
-	else
-		return (0);
-}
-
-void test_runner(void (*func)(void), const char *funcname)
-{
-	g_test.funcname = funcname;
-	g_test.failed = 0;
+	g_test.curr = &test;
 	g_test.total += 1;
 
-	func();
-	display_result();
+	test.func();
 }
 
-void display_func(const char *message)
+int		run_grp(t_unit_test tests[], int num_tests, char *filename)
 {
-	printf("[  %s  ] %s", message, g_test.funcname);
-}
+	int fails = 0;
+	int fail_index[num_tests];
 
-void display_diagnostics()
-{
-	printf(" in %s:%d", g_test.filename, g_test.line);
-}
-
-void display_result(void)
-{
-	if (g_test.failed)
+	for (int i = 0; i < num_tests; i++)
 	{
-		display_func(TEST_FAIL_MSG);
-		display_diagnostics();
+		test_runner(tests[i]);
+		if (g_test.curr->failed)
+			fail_index[fails++] = i;
+	}
+	// BUG: não exibe a linha de erro
+	if (fails)
+	{
+		printf("%s %s\n", TEST_FAIL_MSG, filename);
+		for (int i = 0; i < fails; i++)
+		{
+			printf(" %s %s", FAIL_SYMBOL, tests[fail_index[i]].name);
+			printf(" at line %d\n", tests[fail_index[i]].line);
+		}
 	}
 	else
-		display_func(TEST_PASS_MSG);
-	printf("\n");
+	{
+		printf("%s %s\n", TEST_PASS_MSG, filename);
+		for (int i = 0; i < num_tests; i++)
+		{
+			printf(" %s %s\n", PASS_SYMBOL, tests[i].name);
+		}
+	}
+	return 0;
 }
