@@ -15,12 +15,12 @@ void	test_assert(int condition, int line)
 	}
 }
 
-void	test_runner(t_unit_test test)
+void	test_runner(t_unit_test *test)
 {
-	g_test.curr = &test;
+	g_test.curr = test;
 	g_test.total += 1;
 
-	test.func();
+	test->func();
 }
 
 int		run_grp(t_unit_test tests[], int num_tests, char *filename)
@@ -30,11 +30,10 @@ int		run_grp(t_unit_test tests[], int num_tests, char *filename)
 
 	for (int i = 0; i < num_tests; i++)
 	{
-		test_runner(tests[i]);
+		test_runner(&tests[i]);
 		if (g_test.curr->failed)
 			fail_index[fails++] = i;
 	}
-	// BUG: não exibe a linha de erro
 	if (fails)
 	{
 		printf("%s %s\n", TEST_FAIL_MSG, filename);
