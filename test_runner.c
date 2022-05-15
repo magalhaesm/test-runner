@@ -1,5 +1,4 @@
 #include "test_runner.h"
-#include <stdio.h>
 
 t_test	g_test;
 
@@ -23,8 +22,18 @@ void	test_runner(t_unit_test *test)
 	test->func();
 }
 
-int		run_grp(t_unit_test tests[], int num_tests, char *filename)
+void	init_tests()
 {
+	if (!g_test.has_entry_point)
+	{
+		g_test.has_entry_point = true;
+		printf("Running unit tests\n");
+	}
+}
+
+bool	run_units(t_unit_test tests[], int num_tests, char *filename)
+{
+	init_tests();
 	int fails = 0;
 	int fail_index[num_tests];
 
@@ -36,19 +45,19 @@ int		run_grp(t_unit_test tests[], int num_tests, char *filename)
 	}
 	if (fails)
 	{
-		printf("%s %s\n", TEST_FAIL_MSG, filename);
+		printf("\n%s %s\n", TEST_FAIL, realpath(filename, NULL));
 		for (int i = 0; i < fails; i++)
 		{
-			printf(" %s %s", FAIL_SYMBOL, tests[fail_index[i]].name);
+			printf(" %s %s", FAIL_SIGN, tests[fail_index[i]].name);
 			printf(" at line %d\n", tests[fail_index[i]].line);
 		}
 	}
 	else
 	{
-		printf("%s %s\n", TEST_PASS_MSG, filename);
+		printf("\n%s %s\n", TEST_PASS, filename);
 		for (int i = 0; i < num_tests; i++)
 		{
-			printf(" %s %s\n", PASS_SYMBOL, tests[i].name);
+			printf(" %s %s\n", PASS_SIGN, tests[i].name);
 		}
 	}
 	return 0;
