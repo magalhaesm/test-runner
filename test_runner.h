@@ -15,7 +15,7 @@
 # define FAILED					BG_RED(" FAIL ")
 # define PASSED					BG_GREEN(" PASS ")
 
-# define FAIL_SIGN				FG_RED("")
+# define FAIL_SIGN				FG_RED("•")
 # define PASS_SIGN				FG_GREEN("✓")
 
 # define RUN_GROUP(tests)		run_units(tests, sizeof(tests)/sizeof(tests[0]), __FILE__)
@@ -34,7 +34,7 @@ typedef struct	s_unit_test
 	void		(*func)(void);
 	int			line;
 	int			failed;
-} t_unit_test;
+}				t_unit_test;
 
 typedef struct	s_test_status
 {
@@ -47,12 +47,12 @@ typedef struct	s_test_status
 
 typedef struct	s_session
 {
-	int fails;
-	int *fail_index;
-	t_unit_test *tests;
-	int num_tests;
-	char *filename;
-} t_session;
+	int			fails;
+	int			*fail_index;
+	t_unit_test	*tests;
+	int			num_tests;
+	char		*filename;
+}				t_session;
 
 void	init_tests(const char *funcname, char *filename);
 void	test_assert(int condition, int line);

@@ -93,4 +93,3 @@ void print_result(t_session s)
 	else
 		print_pass(s);
 }
-
