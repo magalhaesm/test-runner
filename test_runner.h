@@ -6,6 +6,7 @@
 #include <stdbool.h>
 #include <limits.h>
 
+# define RED					"\033[31m"
 # define BOLD(string)			"\033[1m" string "\033[0m"
 # define BG_RED(string)			"\033[7;31m" string "\033[0m"
 # define FG_RED(string)			"\033[1;31m" string "\033[0m"
@@ -15,8 +16,8 @@
 # define FAILED					BG_RED(" FAIL ")
 # define PASSED					BG_GREEN(" PASS ")
 
-# define FAIL_SIGN				FG_RED("•")
-# define PASS_SIGN				FG_GREEN("✓")
+# define FAIL_SIGN				FG_RED("  •")
+# define PASS_SIGN				FG_GREEN("  ✓")
 
 # define RUN_GROUP(tests)		run_units(tests, sizeof(tests)/sizeof(tests[0]), __FILE__)
 # define UNIT_TEST(function)	{.func=function, .name=#function}

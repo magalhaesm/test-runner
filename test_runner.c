@@ -72,8 +72,7 @@ void print_fail(t_session s)
 	for (int i = 0; i < s.fails; i++)
 	{
 		test = &s.tests[s.fail_index[i]];
-		printf("  %s %s", FAIL_SIGN, test->name);
-		printf(" at line %d\n", test->line);
+		printf("%s %s%s at line %d\n", FAIL_SIGN, RED, test->name, test->line);
 	}
 }
 
@@ -82,7 +81,7 @@ void print_pass(t_session s)
 	printf("\n%s %s\n", PASSED, s.filename);
 	for (int i = 0; i < s.num_tests; i++)
 	{
-		printf("  %s %s\n", PASS_SIGN, s.tests[i].name);
+		printf("%s %s\n", PASS_SIGN, s.tests[i].name);
 	}
 }
 
