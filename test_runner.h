@@ -12,8 +12,8 @@
 # define BG_GREEN(string)		"\033[7;32m" string "\033[0m"
 # define FG_GREEN(string)		"\033[1;32m" string "\033[0m"
 
-# define FAILED					BG_RED(" FAILED ")
-# define PASSED					BG_GREEN(" PASSED ")
+# define FAILED					BG_RED(" FAIL ")
+# define PASSED					BG_GREEN(" PASS ")
 
 # define FAIL_SIGN				FG_RED("")
 # define PASS_SIGN				FG_GREEN("✓")
@@ -21,8 +21,9 @@
 # define RUN_GROUP(tests)		run_units(tests, sizeof(tests)/sizeof(tests[0]), __FILE__)
 # define UNIT_TEST(function)	{.func=function, .name=#function}
 # define ASSERT_EXPR(condition)	test_assert(condition, __LINE__)
+# define BEGIN()				init_tests(__func__, __FILE__)
 
-enum			e_values {
+enum			e_retcodes {
 	TEST_SUCCESS,
 	TEST_FAILED,
 };
@@ -41,9 +42,10 @@ typedef struct	s_test_status
 	int			total;
 	int			failures;
 	bool		has_entry_point;
+	bool		is_unit;
 }				t_test;
 
-typedef struct s_session
+typedef struct	s_session
 {
 	int fails;
 	int *fail_index;
@@ -52,7 +54,7 @@ typedef struct s_session
 	char *filename;
 } t_session;
 
-void	init_tests(void);
+void	init_tests(const char *funcname, char *filename);
 void	test_assert(int condition, int line);
 void	test_runner(t_unit_test *new_test);
 int		run_units(t_unit_test tests[], int num_tests, char *filename);

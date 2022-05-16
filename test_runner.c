@@ -1,5 +1,4 @@
 #include "test_runner.h"
-#include <stdio.h>
 
 t_test	g_test;
 
@@ -7,9 +6,9 @@ void	test_assert(int condition, int line)
 {
 	if (g_test.curr->line)
 		return;
-	if (!condition)
+	if (condition == false)
 	{
-		g_test.curr->failed = 1;
+		g_test.curr->failed = true;
 		g_test.curr->line = line;
 		g_test.failures += 1;
 	}
@@ -22,22 +21,30 @@ void	test_runner(t_unit_test *test)
 	test->func();
 }
 
-void	init_tests(void)
+void	init_tests(const char *funcname, char *filename)
 {
-	if (!g_test.has_entry_point)
+	char path[PATH_MAX];
+
+	if (g_test.has_entry_point == false)
 	{
 		g_test.has_entry_point = true;
-		printf("Running unit tests\n");
+		if (g_test.is_unit == false)
+		{
+			realpath(filename, path);
+			printf("Running %s() from %s\n", funcname, path);
+		}
+		else
+			printf("%s\n", BOLD("Running unit tests"));
 	}
 }
 
-// TODO: usar setjmp para chamar a função que exibe o diagnóstico
 int		run_units(t_unit_test tests[], int num_tests, char *filename)
 {
 	int		fails;
 	int		fail_index[num_tests];
 
-	init_tests();
+	g_test.is_unit = true;
+	BEGIN();
 	fails = 0;
 	for (int i = 0; i < num_tests; i++)
 	{
@@ -59,12 +66,9 @@ int		run_units(t_unit_test tests[], int num_tests, char *filename)
 
 void print_fail(t_session s)
 {
-	char	path[PATH_MAX];
 	t_unit_test *test;
 
-	// TODO: tratar possível erro
-	realpath(s.filename, path);
-	printf("\n%s %s\n", FAILED, path);
+	printf("\n%s %s\n", FAILED, s.filename);
 	for (int i = 0; i < s.fails; i++)
 	{
 		test = &s.tests[s.fail_index[i]];
@@ -89,3 +93,4 @@ void print_result(t_session s)
 	else
 		print_pass(s);
 }
+
