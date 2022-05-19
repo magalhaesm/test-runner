@@ -6,9 +6,12 @@ void	test_assert(int condition, int line)
 {
 	if (g_test.curr->line)
 		return;
-	if (condition == false)
+	if (condition == true)
 	{
-		g_test.curr->failed = true;
+		g_test.curr->failed = false;
+	}
+	else
+	{
 		g_test.curr->line = line;
 		g_test.failures += 1;
 	}
@@ -17,6 +20,7 @@ void	test_assert(int condition, int line)
 void	test_runner(t_unit_test *test)
 {
 	g_test.curr = test;
+	g_test.curr->failed = true;
 	g_test.total += 1;
 	test->func();
 }
