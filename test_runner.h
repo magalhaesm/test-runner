@@ -6,6 +6,7 @@
 #include <stdbool.h>
 #include <limits.h>
 
+# define NC						"\033[m"
 # define RED					"\033[31m"
 # define BOLD(string)			"\033[1m" string "\033[0m"
 # define BG_RED(string)			"\033[7;31m" string "\033[0m"

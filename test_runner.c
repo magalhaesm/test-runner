@@ -25,11 +25,18 @@ void	test_runner(t_unit_test *test)
 	test->func();
 }
 
+void	conclude(void)
+{
+	printf("\nTotal: %d\n", g_test.total);
+	printf("\nPassed: %d\n", g_test.total - g_test.failures);
+	printf("Failures: %d\n", g_test.failures);
+}
+
 void	init_tests(const char *funcname, char *filename)
 {
 	char path[PATH_MAX];
 
-	if (g_test.has_entry_point == false)
+	if (!g_test.has_entry_point)
 	{
 		g_test.has_entry_point = true;
 		if (g_test.is_unit == false)
@@ -39,6 +46,7 @@ void	init_tests(const char *funcname, char *filename)
 		}
 		else
 			printf("%s\n", BOLD("Running unit tests"));
+		atexit(conclude);
 	}
 }
 
@@ -76,7 +84,7 @@ void print_fail(t_session s)
 	for (int i = 0; i < s.fails; i++)
 	{
 		test = &s.tests[s.fail_index[i]];
-		printf("%s %s%s at line %d\n", FAIL_SIGN, RED, test->name, test->line);
+		printf("%s %s%s at line %d%s\n", FAIL_SIGN, RED, test->name, test->line, NC);
 	}
 }
 
